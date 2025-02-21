@@ -104,7 +104,7 @@ variable "private_endpoints" {
   type = list(object({
     sub_resource_name   = optional(string, "vault")
     subnet_id           = string
-    private_dns_zone_id = string
+    private_dns_zone_id = optional(string)
   }))
   default = []
 
@@ -115,12 +115,15 @@ variable "private_endpoints" {
     ])
     error_message = "Invalid sub_resource_name within var.private_endpoints. Expected the name to be 'vault'."
   }
-
   validation {
-    condition = alltrue([
-      for entry in var.private_endpoints :
-      element(split("/", entry.private_dns_zone_id), 8) == "privatelink.vaultcore.azure.net"
-    ])
+    condition = (
+      var.private_endpoints == null ||
+      alltrue([
+        for entry in var.private_endpoints :
+        can(element(split("/", entry.private_dns_zone_id), 8)) &&
+        element(split("/", entry.private_dns_zone_id), 8) == "privatelink.vaultcore.azure.net"
+      ])
+    )
     error_message = "Invalid private_dns_zone_id attribute within var.private_endpoints. Expected a Private DNS Zone with the name 'privatelink.vaultcore.azure.net'"
   }
 }
