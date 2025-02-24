@@ -120,8 +120,10 @@ variable "private_endpoints" {
       var.private_endpoints == null ||
       alltrue([
         for entry in var.private_endpoints :
-        can(element(split("/", entry.private_dns_zone_id), 8)) &&
-        element(split("/", entry.private_dns_zone_id), 8) == "privatelink.vaultcore.azure.net"
+        entry.private_dns_zone_id == null ? true : (
+          can(element(split("/", entry.private_dns_zone_id), 8)) &&
+          element(split("/", entry.private_dns_zone_id), 8) == "privatelink.vaultcore.azure.net"
+        )
       ])
     )
     error_message = "Invalid private_dns_zone_id attribute within var.private_endpoints. Expected a Private DNS Zone with the name 'privatelink.vaultcore.azure.net'"
