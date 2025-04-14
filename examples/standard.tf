@@ -50,13 +50,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_one" {
 module "enc_key_vault" {
   source = "../"
 
+  naming_convention = "gc"
+  user_defined      = "example"
+
   azure_resource_attributes = {
-    project     = "aur"
-    environment = "dev"
-    location    = azurerm_resource_group.keyvault.location
-    instance    = 0
+    department_code = "Gc"
+    owner           = "ABC"
+    project         = "aur"
+    environment     = "dev"
+    location        = azurerm_resource_group.keyvault.location
+    instance        = 0
   }
-  user_defined        = "example"
+
   resource_group_name = azurerm_resource_group.keyvault.name
 
   sku_name                   = "premium"
