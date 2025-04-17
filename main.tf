@@ -2,12 +2,6 @@
 ## Key Vault ##
 ###############
 
-module "key_vault_name" {
-  source = "git::https://github.com/gccloudone-aurora-iac/terraform-aurora-azure-resource-names-global.git?ref=v2.0.0"
-
-  user_defined = var.user_defined
-}
-
 resource "azurerm_key_vault" "this" {
   name                = module.key_vault_name.key_vault_name
   resource_group_name = var.resource_group_name
